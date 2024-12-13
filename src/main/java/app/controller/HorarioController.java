@@ -25,7 +25,7 @@ import jakarta.validation.Valid;
 @RestController
 @Validated
 @RequestMapping("/api/horario")
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*")
 public class HorarioController {
 
 	@Autowired
@@ -52,7 +52,6 @@ public class HorarioController {
 		}
 	}
 
-	@PreAuthorize("hasRole('cliente')")
 	@GetMapping("/listAll")
 	public ResponseEntity<List<Horario>> listAll() {
 		try {

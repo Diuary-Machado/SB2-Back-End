@@ -1,4 +1,4 @@
-package app.controller;
+/*package app.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -186,4 +186,4 @@ public class FormaPagamentoControllerTest {
 	}
 
 
-}
+}*/

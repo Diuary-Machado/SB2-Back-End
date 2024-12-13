@@ -9,57 +9,46 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import app.config.JwtServiceGenerator;
+
 import app.entity.Cliente;
 import app.entity.Funcionario;
 import app.repository.ClienteRepository;
 import app.repository.FuncionarioRepository;
 
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
 @Service
 public class LoginService {
-	
-	@Autowired
-	private ClienteRepository clienteRepository;
-	
-	@Autowired
-	private FuncionarioRepository funcionarioRepository;
-	
-	@Autowired
-	private JwtServiceGenerator jwtService;
-	@Autowired
-	private AuthenticationManager authenticationManager;
 
+    public String logar(LoginModel user) {
 
-	public String logar(Login login) {
-		String jwtToken = "";
-		
-		// Login não funcionando. Debuggando não passa dessa linha
-		// git add .
-		// git commit -m "mensagem"
-		// git push+++++++++++++++++++++++++
-		authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(
-						login.getUsername(),
-						login.getPassword()
-						)
-				);
-		
+        HttpHeaders headers = new HttpHeaders();
+        RestTemplate rt = new RestTemplate();
 
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-		Optional<Cliente> user = clienteRepository.findByUsername(login.getUsername());
-		Optional<Funcionario>  admin = funcionarioRepository.findByUsername(login.getUsername());
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
 
-		if(user.isPresent()) {
-			jwtToken = jwtService.generateToken(user.get().getUsername(), user.get().getIdCliente(), "cliente");
-;		}else if(admin.isPresent()) {
-			System.out.println("e");
-			jwtToken = jwtService.generateToken(admin.get().getUsername(), admin.get().getIdFuncionario(), "admin");
-		}else 
-			throw  new UsernameNotFoundException("Usuário não encontrado");
-		
-	
-		
-		return jwtToken;
-	}
-
+        formData.add("client_id", user.getClientId());
+        formData.add("username", user.getUsername());
+        formData.add("password", user.getPassword());
+        formData.add("grant_type", user.getGrantType());
+        System.out.println("aqui");
+        
+        String url = "http://192.168.56.10:8080/realms/barberscom-realm/protocol/openid-connect/token";
+        
+        HttpEntity<MultiValueMap<String, String>> entity
+		= new HttpEntity<>(formData, headers);
+        
+        String result = rt.postForEntity(url, entity, String.class).getBody();
+        return result;
+    }
 }

@@ -26,7 +26,8 @@ import jakarta.validation.Valid;
 @Validated
 @RestController
 @RequestMapping("/api/cliente")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "https://barbearia.mshome.net")
+@CrossOrigin(originPatterns = "*")
 public class ClienteController {
 	
 	@Autowired
@@ -52,7 +53,6 @@ public class ClienteController {
 		}
 	}
 	
-	@PreAuthorize("hasRole('cliente')")
 	@GetMapping("/listAll")
 	public ResponseEntity<List<Cliente>> listAll(){
 		try {
